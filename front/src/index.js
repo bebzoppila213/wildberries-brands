@@ -31,16 +31,31 @@ async function getBrands(query) {
     return response.data
 }
 
-document.querySelector("#brand").addEventListener("input", (event) => {
+function debounce(func, timeout = 400) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
+}
+
+function handlingBrandInput() {
     const brandList = document.querySelector("#brands-list").querySelectorAll(".list-group-item")
+    const brandName = document.querySelector("#brand").value
+
     brandList.forEach((brandListItem) => {
         brandListItem.classList.remove("text-primary")
     })
+
     brandList.forEach(brandListItem => {
-        if (brandListItem.textContent == event.target.value) {
+        if (brandListItem.textContent == brandName) {
             brandListItem.classList.add("text-primary")
         }
     })
+}
 
-    console.log();
+const handlingBrandInputDebounce = debounce(() => handlingBrandInput())
+
+document.querySelector("#brand").addEventListener("input", (event) => {
+    handlingBrandInputDebounce()
 })
